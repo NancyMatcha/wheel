@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>井盖为什么是圆的？· 下落实验</title>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#17181d; --panel:#20232a; --panel2:#262a32; --line:#31353f;
+  --ink:#edeae1; --ink2:#a7a49a;
+  --yellow:#f6b81c; --yellow2:#ffd479;
+  --orange:#ff8a3d; --red:#ff5c5c; --green:#54d97c;
+  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans SC',sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,.kt{font-family:'ZCOOL QingKe HuangYou','Noto Sans SC',sans-serif;font-weight:400}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+button{font-family:inherit;cursor:pointer}
+::selection{background:var(--yellow);color:#111}
+
+.topbar{position:sticky;top:0;z-index:60;background:rgba(20,21,26,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:12px;height:56px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'ZCOOL QingKe HuangYou';font-size:18px;color:var(--yellow2)}
+.logo svg{width:24px;height:24px}
+.sndbtn{margin-left:auto;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink2);display:grid;place-items:center}
+.sndbtn:hover{color:var(--ink)}
+.sndbtn svg{width:18px;height:18px}
+
+.hero{padding:34px 0 4px;text-align:center}
+.kicker{display:inline-block;font-size:13px;color:#141414;background:var(--yellow);padding:4px 14px;border-radius:999px;font-weight:700;margin-bottom:12px}
+.hero h1{font-size:clamp(28px,4.6vw,44px)}
+.hero h1 em{font-style:normal;color:var(--yellow)}
+.hero p{color:var(--ink2);margin:10px auto 0;max-width:620px;font-size:14.5px}
+
+section{padding:26px 0 10px}
+.btn{background:var(--yellow);color:#141414;border:none;border-radius:12px;padding:10px 18px;font-size:14.5px;font-weight:700;transition:.15s;box-shadow:0 3px 0 #a67c0a}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #a67c0a}
+.btn.ghost{background:var(--panel2);color:var(--ink);box-shadow:none;border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ===== 实验舞台 ===== */
+.stage{position:relative;height:548px;border-radius:18px;overflow:hidden;border:1px solid var(--line);
+  background:linear-gradient(165deg,#2e323a,#24272e 60%,#272a31);box-shadow:inset 0 2px 0 rgba(255,255,255,.05),inset 0 -40px 70px rgba(0,0,0,.4);touch-action:none}
+.stage::before{content:'';position:absolute;inset:0;background-image:var(--noise);pointer-events:none}
+.stage.shake{animation:shake .42s}
+@keyframes shake{0%,100%{transform:translate(0,0)}15%{transform:translate(-7px,4px)}30%{transform:translate(6px,-5px)}45%{transform:translate(-5px,3px)}60%{transform:translate(4px,-3px)}75%{transform:translate(-3px,2px)}}
+.s2-title{position:absolute;left:20px;top:14px;font-size:13px;color:#8b887e;letter-spacing:.12em}
+
+.pit{position:absolute;left:38%;top:52%;width:260px;height:260px;transform:translate(-50%,-50%)}
+.pit-hazard{position:absolute;inset:0;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5))}
+.holesvg{position:absolute;inset:0}
+.holesvg circle,.holesvg rect,.holesvg path{transition:opacity .35s}
+.pit-tag{position:absolute;left:50%;bottom:-36px;transform:translateX(-50%);white-space:nowrap;background:rgba(15,16,20,.8);border:1px solid var(--line);color:var(--ink2);font-size:12px;padding:3px 12px;border-radius:999px}
+.pit-tag b{color:var(--yellow2)}
+.pit-dashed{position:absolute;inset:0;opacity:0;transition:opacity .2s;pointer-events:none}
+.pit-dashed.show{opacity:1}
+.pit-dashed svg{width:100%;height:100%;overflow:visible}
+
+.rack{position:absolute;right:14px;top:16px;bottom:16px;width:186px;background:rgba(18,20,25,.66);border:1px solid var(--line);border-radius:16px;padding:12px 10px;display:flex;flex-direction:column;gap:8px;backdrop-filter:blur(3px)}
+.rack-t{font-size:12px;color:var(--ink2);text-align:center;letter-spacing:.14em;margin-bottom:2px}
+.slot{flex:1;border:1.5px dashed #3b3f4a;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:6px;min-height:0}
+.slot .slot-name{font-size:11.5px;color:var(--ink2)}
+.slot.occupied{border-color:transparent}
+
+.cover-drag{position:absolute;z-index:5;touch-action:none;cursor:grab;filter:drop-shadow(0 12px 16px rgba(0,0,0,.55));transform:rotate(var(--rot,0deg));transition:transform .45s,left .35s cubic-bezier(.3,1.2,.4,1),top .35s cubic-bezier(.3,1.2,.4,1),opacity .4s}
+.cover-drag svg{display:block;width:100%;height:auto;pointer-events:none}
+.cover-drag.dragging{cursor:grabbing;z-index:20;transition:none;filter:drop-shadow(0 20px 26px rgba(0,0,0,.65))}
+.cover-drag.covered{cursor:default;filter:drop-shadow(0 5px 8px rgba(0,0,0,.6))}
+.cover-drag.tilt{transform:rotate(calc(var(--rot,0deg) + var(--tilt,-18deg)))!important}
+.cover-drag.wobble{animation:wob .85s both}
+@keyframes wob{0%{transform:rotate(calc(var(--rot,0deg) - 18deg))}30%{transform:rotate(calc(var(--rot,0deg) + 6deg))}60%{transform:rotate(calc(var(--rot,0deg) - 5deg))}100%{transform:rotate(var(--rot,0deg))}}
+
+.tools{margin-top:18px;display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:20px;align-items:center}
+@media(max-width:860px){.tools{grid-template-columns:1fr}}
+.gauge{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.g-top{display:flex;justify-content:space-between;font-size:13px;color:var(--ink2);margin-bottom:9px;gap:8px}
+.g-top b{color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.g-top b.danger{color:var(--red)}
+.g-bar{position:relative;height:16px;border-radius:8px;background:#191c22;border:1px solid #2b2f38}
+.g-safe{position:absolute;top:0;bottom:0;right:0;background:rgba(84,217,124,.16);border-radius:0 8px 8px 0}
+.g-danger{position:absolute;top:0;bottom:0;left:0;background:rgba(255,92,92,.14);border-radius:8px 0 0 8px}
+.g-mark{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--yellow)}
+.g-mark em{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-style:normal;font-size:10.5px;color:var(--yellow);white-space:nowrap}
+.g-cursor{position:absolute;top:-4px;bottom:-4px;width:5px;background:var(--orange);border-radius:3px;margin-left:-2px}
+.g-cursor::after{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--orange)}
+.g-cursor.bad{background:var(--red)}
+.g-cursor.bad::after{border-top-color:var(--red)}
+.g-scale{display:flex;justify-content:space-between;font-size:11px;color:#6d6a62;margin-top:8px}
+.tool-side{display:flex;flex-direction:column;gap:10px}
+.hint-line{font-size:14px;color:var(--ink2)}
+.hint-line b{color:var(--yellow2)}
+.rule-line{font-size:13px;color:#8b887e;border-left:3px solid var(--yellow);padding-left:10px}
+.rule-line b{color:var(--yellow2)}
+.tool-btns{display:flex;flex-wrap:wrap;gap:10px;min-height:44px}
+.key-fact{margin-top:16px;text-align:center;font-size:14.5px;color:var(--ink2);background:var(--panel);border:1px dashed #4a4f5b;border-radius:14px;padding:12px 16px}
+.key-fact b{color:var(--yellow)}
+
+.msg-card{position:absolute;right:16px;top:16px;width:min(330px,80%);z-index:30;background:#22252c;border:1px solid var(--line);border-left:4px solid var(--green);border-radius:14px;padding:16px 18px;box-shadow:0 18px 40px rgba(0,0,0,.5);transform:translateX(30px);opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,.9,.3,1.2)}
+.msg-card.show{transform:none;opacity:1;pointer-events:auto}
+.msg-card.err{border-left-color:var(--red)}
+.mc-head{display:flex;align-items:center;gap:9px;font-weight:800;font-size:16px;margin-bottom:8px}
+.msg-card.ok .mc-head{color:var(--green)}
+.msg-card.err .mc-head{color:var(--red)}
+.mc-head svg{width:20px;height:20px}
+.msg-card p{font-size:13.5px;color:#cfccc2;line-height:1.75}
+.msg-card .mc-formula{margin:9px 0 0;background:#191c22;border-radius:9px;padding:7px 11px;font-size:13px;color:var(--yellow2);font-variant-numeric:tabular-nums}
+.mc-close{margin-top:10px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:6px 14px;font-size:12.5px}
+.mc-close:hover{border-color:#4a5060}
+@media(max-width:860px){
+  .stage{height:640px}
+  .pit{left:50%;top:36%}
+  .rack{left:12px;right:12px;top:auto;bottom:12px;width:auto;height:150px;flex-direction:row;padding:10px}
+  .msg-card{top:10px;right:10px;left:10px;width:auto}
+}
+
+.pt{position:absolute;pointer-events:none;z-index:25;animation:ptFly .75s cubic-bezier(.2,.7,.4,1) forwards}
+.pt.dust{width:9px;height:9px;border-radius:50%;background:#8a8f99;opacity:.85}
+.pt.star{width:13px;height:13px;background:var(--yellow2);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
+@keyframes ptFly{to{transform:translate(var(--dx),var(--dy)) scale(.2) rotate(200deg);opacity:0}}
+.toast{position:fixed;left:50%;bottom:34px;transform:translate(-50%,20px);background:#0f1014;border:1px solid var(--line);color:var(--ink);padding:10px 20px;border-radius:12px;font-size:13.5px;z-index:80;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{padding:36px 0 46px;text-align:center;color:var(--ink2);font-size:13.5px}
+footer b{color:var(--yellow2)}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="gIron" cx="38%" cy="30%" r="82%">
+      <stop offset="0" stop-color="#6b7280"/><stop offset=".55" stop-color="#565c68"/><stop offset="1" stop-color="#3a3f49"/>
+    </radialGradient>
+    <pattern id="pDiag" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="14" stroke="#3b4049" stroke-width="3.5"/>
+      <line x1="7" y1="0" x2="7" y2="14" stroke="#454b56" stroke-width="3.5"/>
+    </pattern>
+    <pattern id="pHazard" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <rect width="20" height="20" fill="#f2b31c"/><rect width="10" height="20" fill="#1e2024"/>
+    </pattern>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="logo">
+      <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#565c68" stroke="#141414" stroke-width="2.5"/><circle cx="20" cy="20" r="12" fill="none" stroke="#3a3f49" stroke-width="3"/><circle cx="20" cy="20" r="4.5" fill="#3a3f49"/></svg>
+      <span>井盖的秘密 · 下落实验</span>
+    </div>
+    <button class="sndbtn" id="sndBtn" title="音效开关">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z" fill="currentColor" stroke="none"/><path class="snd-on" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12"/><path class="snd-off" d="M16 9l6 6M22 9l-6 6" style="display:none"/></svg>
+    </button>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">人教版六年级 · 圆的认识</span>
+    <h1>井盖为什么是<em>圆</em>的？</h1>
+    <p>三个井盖最宽的地方都一样是 <b style="color:var(--yellow2)">62cm</b>，井口都是 <b style="color:var(--yellow2)">60cm</b>。拖它们盖到井口上，再点「翘起来试试」——谁能守住井口？</p>
+  </div>
+</header>
+
+<section id="s2">
+  <div class="wrap">
+    <div class="stage" id="stage">
+      <div class="s2-title">井盖下落测试场</div>
+      <div class="pit" id="pit">
+        <svg class="pit-hazard" viewBox="0 0 260 260">
+          <circle cx="130" cy="130" r="122" fill="none" stroke="url(#pHazard)" stroke-width="14"/>
+          <circle cx="130" cy="130" r="129" fill="none" stroke="#14161a" stroke-width="3"/>
+          <circle cx="130" cy="130" r="115" fill="none" stroke="#14161a" stroke-width="3"/>
+        </svg>
+        <svg class="holesvg" viewBox="0 0 260 260">
+          <circle id="holeCircle" cx="130" cy="130" r="66" fill="#070708" stroke="#000" stroke-width="4"/>
+          <rect id="holeSquare" x="64" y="64" width="132" height="132" rx="5" fill="#070708" stroke="#000" stroke-width="4" style="opacity:0"/>
+          <path id="holeTri" d="M130 65.4 L194.9 178.1 L65.1 178.1 Z" fill="#070708" stroke="#000" stroke-width="4" style="opacity:0" stroke-linejoin="round"/>
+        </svg>
+        <div class="pit-dashed" id="pitDashed"></div>
+        <div class="pit-tag">测试井口 · <b>60 cm</b>（形状随井盖变化）</div>
+      </div>
+      <div class="rack" id="rack">
+        <div class="rack-t">井盖材料架</div>
+        <div class="slot" data-slot="0"><span class="slot-name"></span></div>
+        <div class="slot" data-slot="1"><span class="slot-name"></span></div>
+        <div class="slot" data-slot="2"><span class="slot-name"></span></div>
+      </div>
+      <div class="msg-card" id="msgCard">
+        <div class="mc-head" id="mcHead"></div>
+        <p id="mcBody"></p>
+        <div class="mc-formula" id="mcFormula"></div>
+        <button class="mc-close" id="mcClose">知道了</button>
+      </div>
+    </div>
+
+    <div class="tools">
+      <div class="gauge">
+        <div class="g-top"><span>井盖竖起来后，挡在井口上的宽度</span><b id="gVal">— cm</b></div>
+        <div class="g-bar">
+          <div class="g-danger" id="gDanger"></div><div class="g-safe" id="gSafe"></div>
+          <i class="g-mark" id="gMark" style="left:60%"><em id="gMarkTxt">井口 60 cm</em></i>
+          <i class="g-cursor" id="gCur" style="left:0%"></i>
+        </div>
+        <div class="g-scale"><span>0</span><span>100 cm</span></div>
+      </div>
+      <div class="tool-side">
+        <div class="rule-line">判断口诀：井盖<b>最窄</b>的方向，只要比井口<b>最宽</b>的方向小，就会掉进去。</div>
+        <div class="hint-line" id="st2Hint">拖一个井盖到井口上方，松手把它盖好。</div>
+        <div class="tool-btns" id="toolBtns"></div>
+      </div>
+    </div>
+
+    <div class="key-fact">圆形井盖<b>最窄 = 最宽 = 62cm</b>：不管怎么转、怎么竖，挡在井口上的永远是直径——这就是<b>直径处处相等</b>，圆连"窄方向"都没有。</div>
+  </div>
+</section>
+
+<footer>盖子必须比口大，才搭得住；圆的直径处处相等，所以永远搭得稳。</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= 音效 ================= */
+const SFX={
+  ac:null,on:true,
+  ctx(){if(!this.on)return null;if(!this.ac){const A=window.AudioContext||window.webkitAudioContext;if(A)this.ac=new A();}if(this.ac&&this.ac.state==='suspended')this.ac.resume();return this.ac;},
+  tone(f,d,o={}){const ac=this.ctx();if(!ac)return;const t=ac.currentTime+(o.delay||0),os=ac.createOscillator(),g=ac.createGain();os.type=o.type||'sine';os.frequency.setValueAtTime(f,t);if(o.to)os.frequency.exponentialRampToValueAtTime(o.to,t+d);g.gain.setValueAtTime(o.vol||.15,t);g.gain.exponentialRampToValueAtTime(.0008,t+d);os.connect(g).connect(ac.destination);os.start(t);os.stop(t+d+.03);},
+  noise(d,o={}){const ac=this.ctx();if(!ac)return;const t=ac.currentTime+(o.delay||0),len=Math.floor(ac.sampleRate*d);const buf=ac.createBuffer(1,len,ac.sampleRate),ch=buf.getChannelData(0);for(let i=0;i<len;i++)ch[i]=Math.random()*2-1;const src=ac.createBufferSource();src.buffer=buf;const f=ac.createBiquadFilter();f.type=o.ft||'lowpass';f.frequency.value=o.ff||800;const g=ac.createGain();g.gain.setValueAtTime(o.vol||.2,t);g.gain.exponentialRampToValueAtTime(.001,t+d);src.connect(f).connect(g).connect(ac.destination);src.start(t);},
+  click(){this.tone(1500,.05,{type:'square',vol:.04})},
+  pick(){this.tone(520,.09,{type:'triangle',vol:.09})},
+  clack(){this.noise(.05,{ff:2400,vol:.2});this.tone(190,.06,{type:'square',vol:.07})},
+  ding(){this.tone(880,.4,{vol:.13});this.tone(1318.5,.5,{vol:.08,delay:.07})},
+  thud(){this.tone(110,.28,{to:42,vol:.5});this.noise(.12,{ff:320,vol:.3})},
+  slide(){this.noise(.34,{ft:'bandpass',ff:1400,vol:.1})},
+  whoosh(){this.noise(.38,{ft:'bandpass',ff:900,vol:.12})},
+  good(){[659,880,1108].forEach((f,i)=>this.tone(f,.24,{vol:.12,delay:i*.1}))}
+};
+document.getElementById('sndBtn').addEventListener('click',()=>{
+  SFX.on=!SFX.on;
+  document.querySelector('.snd-on').style.display=SFX.on?'':'none';
+  document.querySelector('.snd-off').style.display=SFX.on?'none':'';
+  if(SFX.on)SFX.click();
+});
+document.addEventListener('pointerdown',()=>SFX.ctx(),{passive:true});
+
+/* ================= 工具 ================= */
+const $=s=>document.querySelector(s);
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function tween(from,to,dur,fn){const t0=performance.now();(function step(t){let p=Math.min(1,(t-t0)/dur);p=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;fn(from+(to-from)*p);if(p<1)requestAnimationFrame(step);})(t0);}
+const ICON={
+  ok:'<svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  cross:'<svg viewBox="0 0 20 20"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>'
+};
+let toastTimer;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400);}
+function spawnParticles(box,x,y,kind,n=9){
+  for(let i=0;i<n;i++){const s=document.createElement('span');s.className='pt '+kind;
+    const a=Math.random()*Math.PI*2,d=40+Math.random()*70;
+    s.style.left=x+'px';s.style.top=y+'px';
+    s.style.setProperty('--dx',Math.cos(a)*d+'px');
+    s.style.setProperty('--dy',(Math.sin(a)*d-(kind==='star'?50:20))+'px');
+    box.appendChild(s);setTimeout(()=>s.remove(),800);}
+}
+function stopAnims(el){if(el.getAnimations)try{el.getAnimations().forEach(a=>a.cancel());}catch(_){}}
+
+/* ================= 井盖绘制 ================= */
+function rays(cx,cy,r1,r2,n,stroke,w){let s='';for(let i=0;i<n;i++){const a=i*2*Math.PI/n;s+=`<line x1="${(cx+r1*Math.cos(a)).toFixed(1)}" y1="${(cy+r1*Math.sin(a)).toFixed(1)}" x2="${(cx+r2*Math.cos(a)).toFixed(1)}" y2="${(cy+r2*Math.sin(a)).toFixed(1)}" stroke="${stroke}" stroke-width="${w}"/>`;}return s;}
+function bolts(pts,r=5){return pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="${r}" fill="#262a31" stroke="#6a7180" stroke-width="1.3"/>`).join('');}
+function engraved(cx,cy,txt,size){return `<text x="${cx}" y="${cy+1.6}" text-anchor="middle" font-size="${size}" font-weight="800" fill="#79818f" opacity=".4" font-family="ZCOOL QingKe HuangYou,Noto Sans SC">${txt}</text><text x="${cx}" y="${cy}" text-anchor="middle" font-size="${size}" font-weight="800" fill="#24272e" font-family="ZCOOL QingKe HuangYou,Noto Sans SC">${txt}</text>`;}
+function coverSVG(shape){
+  if(shape==='circle')return `<svg viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="94" fill="url(#gIron)" stroke="#191b20" stroke-width="4"/>
+    ${rays(100,100,62,79,24,'#3b4049',4)}
+    <circle cx="100" cy="100" r="84" fill="none" stroke="#343943" stroke-width="6"/>
+    <circle cx="100" cy="100" r="60" fill="#4b515d" stroke="#2b2f37" stroke-width="3"/>
+    ${engraved(100,94,'雨',26)}${engraved(100,124,'水',26)}
+    ${bolts([[100,16],[187,100],[100,184],[13,100],[47.5,47.5],[152.5,47.5],[152.5,152.5],[47.5,152.5]],4.5)}</svg>`;
+  if(shape==='square')return `<svg viewBox="0 0 200 200">
+    <rect x="5" y="5" width="190" height="190" rx="14" fill="url(#gIron)" stroke="#191b20" stroke-width="4"/>
+    <rect x="20" y="20" width="160" height="160" rx="8" fill="url(#pDiag)" stroke="#343943" stroke-width="5"/>
+    <rect x="62" y="86" width="76" height="30" rx="7" fill="#4d5360" stroke="#2b2f37" stroke-width="2.5"/>
+    ${engraved(100,109,'污',24)}
+    ${bolts([[33,33],[167,33],[33,167],[167,167]])}</svg>`;
+  return `<svg viewBox="0 0 200 178">
+    <path d="M100 10 L192 168 L8 168 Z" fill="url(#gIron)" stroke="#191b20" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M100 26 L178 162 L22 162 Z" fill="#4b515d" stroke="#2b2f37" stroke-width="3" stroke-linejoin="round"/>
+    <line x1="80" y1="60" x2="120" y2="60" stroke="#3b4049" stroke-width="4"/>
+    <line x1="64" y1="88" x2="136" y2="88" stroke="#3b4049" stroke-width="4"/>
+    <line x1="48" y1="116" x2="152" y2="116" stroke="#3b4049" stroke-width="4"/>
+    <rect x="68" y="80" width="64" height="28" rx="7" fill="#565c68" stroke="#2b2f37" stroke-width="2.5"/>
+    ${engraved(100,102,'电',23)}
+    ${bolts([[100,36],[170,158],[30,158]],4.5)}</svg>`;
+}
+
+/* ================= 数据：统一尺寸 =================
+   井口一律 60cm；井盖最宽一律 62cm（盖子要比口大才搭得住）
+   flat=平放最宽  min=竖起来后最窄  holeMax=井口最宽方向          */
+const CM=2.2;
+const COVERS2=[
+  {id:'circle',name:'圆形',  label:'直径 62 cm', w:62*CM, h:62*CM,     flat:62,   min:62,   holeMax:60,   holeTxt:'井口 60 cm',     tiltDeg:-18, fit:true },
+  {id:'square',name:'正方形',label:'边长 62 cm', w:62*CM, h:62*CM,     flat:87.7, min:62,   holeMax:84.8, holeTxt:'井口对角线 84.8', tiltDeg:-55, fit:false},
+  {id:'tri',   name:'三角形',label:'边长 62 cm', w:62*CM, h:62*CM*.89, flat:62,   min:53.7, holeMax:60,   holeTxt:'井口 60 cm',     tiltDeg:-62, fit:false}
+];
+const GUIDES={
+  circle:'<circle cx="130" cy="130" r="68.2" fill="none" stroke="#f6b81c" stroke-width="2.5" stroke-dasharray="8 7"/>',
+  square:'<rect x="61.8" y="61.8" width="136.4" height="136.4" rx="5" fill="none" stroke="#f6b81c" stroke-width="2.5" stroke-dasharray="8 7"/>',
+  tri:'<path d="M130 58.1 L198.2 177.3 L61.8 177.3 Z" fill="none" stroke="#f6b81c" stroke-width="2.5" stroke-dasharray="8 7" stroke-linejoin="round"/>'
+};
+const HOLES={circle:'holeCircle',square:'holeSquare',tri:'holeTri'};
+
+/* ================= 元素 ================= */
+const stage=$('#stage'),pit=$('#pit'),rack=$('#rack'),pitDashed=$('#pitDashed');
+const toolBtns=$('#toolBtns'),st2Hint=$('#st2Hint');
+const st2={testing:false};
+let spinCountN=0;
+
+/* 宽度计 */
+function setHole(shape){for(const k in HOLES)$('#'+HOLES[k]).style.opacity=(k===shape)?1:0;}
+function setGaugeMarker(cfg){
+  const p=Math.max(0,Math.min(100,cfg.holeMax));
+  $('#gMark').style.left=p+'%';
+  $('#gMarkTxt').textContent=cfg.holeTxt+' cm';
+  $('#gDanger').style.width=p+'%';
+  $('#gSafe').style.left=p+'%';
+}
+function setGaugeCover(cm,bad){
+  const c=Math.max(0,Math.min(100,cm));
+  const cur=$('#gCur');
+  cur.style.left=c+'%';
+  cur.classList.toggle('bad',!!bad);
+  const v=$('#gVal');
+  v.textContent=(cm===null?'—':cm.toFixed(1))+' cm';
+  v.classList.toggle('danger',!!bad);
+}
+setHole('circle');setGaugeMarker(COVERS2[0]);setGaugeCover(null);
+
+/* 创建井盖 */
+COVERS2.forEach((cfg,idx)=>{
+  const el=document.createElement('div');
+  el.className='cover-drag';
+  el.style.width=cfg.w+'px';
+  el.innerHTML=coverSVG(cfg.id);
+  stage.appendChild(el);
+  cfg._st={cfg,el,idx,st:'home',rot:0};
+  el.addEventListener('pointerdown',e=>onDragStart(e,cfg._st));
+});
+document.querySelectorAll('#rack .slot').forEach((s,i)=>{
+  s.querySelector('.slot-name').textContent=COVERS2[i].name+' · '+COVERS2[i].label;
+});
+function stagePos(){return stage.getBoundingClientRect();}
+function pitCenter(){const r=pit.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};}
+function elCenter(el){const r=el.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};}
+function nearPit(el){const c=elCenter(el),p=pitCenter();return Math.hypot(c.x-p.x,c.y-p.y)<115;}
+function coveredSt(){return COVERS2.map(c=>c._st).find(s=>s.st==='covered');}
+function placeHome(st2o){
+  const slot=rack.querySelector(`.slot[data-slot="${st2o.idx}"]`);
+  const r=slot.getBoundingClientRect(),sr=stagePos();
+  st2o.el.style.width=Math.min(st2o.cfg.w,r.width-16)+'px';
+  st2o.el.style.left=(r.left-sr.left+r.width/2-st2o.el.offsetWidth/2)+'px';
+  st2o.el.style.top =(r.top -sr.top +r.height/2-st2o.el.offsetHeight/2-6)+'px';
+  st2o.el.style.opacity=1;
+  slot.classList.add('occupied');
+}
+function syncCovered(st2o){
+  const r=pit.getBoundingClientRect();
+  const cx=r.left+r.width/2,cy=r.top+r.height/2,sr=stagePos();
+  st2o.el.style.width=st2o.cfg.w+'px';
+  st2o.el.style.left=(cx-sr.left-st2o.cfg.w/2)+'px';
+  st2o.el.style.top =(cy-sr.top -st2o.cfg.h/2)+'px';
+}
+function layoutAll(){COVERS2.forEach(c=>{if(c._st.st==='home')placeHome(c._st);});if(coveredSt())syncCovered(coveredSt());}
+requestAnimationFrame(()=>{layoutAll();layoutAll();});
+window.addEventListener('resize',layoutAll);
+
+/* ================= 拖拽（pointer capture 版） ================= */
+function onDragStart(e,st2o){
+  if(st2.testing)return;
+  if(st2o.st!=='home'&&st2o.st!=='covered')return;
+  e.preventDefault();
+  const el=st2o.el;
+  /* 关键修复①：指针捕获——即使松手在窗口外/被系统打断，up/cancel 也一定触发 */
+  try{el.setPointerCapture(e.pointerId);}catch(_){}
+  const sr=stagePos(),er=el.getBoundingClientRect();
+  const ox=e.clientX-er.left,oy=e.clientY-er.top;
+  el.classList.add('dragging');
+  el.style.left=(er.left-sr.left)+'px';
+  el.style.top =(er.top-sr.top)+'px';
+  const wasCovered=st2o.st==='covered';
+  st2o.st='drag';
+  renderTools();
+  if(wasCovered)st2Hint.innerHTML='拿着<b>'+st2o.cfg.name+'井盖</b>——放回井口盖上，或拖回架子松手放下。';
+  SFX.pick();
+
+  const move=ev=>{
+    el.style.left=(ev.clientX-sr.left-ox)+'px';
+    el.style.top =(ev.clientY-sr.top -oy)+'px';
+    if(nearPit(el)){
+      pitDashed.innerHTML=GUIDES[st2o.cfg.id];pitDashed.classList.add('show');
+      setHole(st2o.cfg.id);setGaugeMarker(st2o.cfg);
+    }else pitDashed.classList.remove('show');
+  };
+  const finish=ev=>{
+    el.removeEventListener('pointermove',move);
+    el.removeEventListener('pointerup',finish);
+    el.removeEventListener('pointercancel',finish);
+    el.classList.remove('dragging');
+    try{el.releasePointerCapture(ev.pointerId);}catch(_){}
+    const other=coveredSt();
+    if(nearPit(el)&&(!other||other===st2o)){
+      coverIt(st2o);
+    }else{
+      if(nearPit(el)&&other&&other!==st2o)toast('井口被占用了——先把'+other.cfg.name+'井盖放回架子');
+      goHome(st2o);
+    }
+    pitDashed.classList.remove('show');
+  };
+  el.addEventListener('pointermove',move);
+  el.addEventListener('pointerup',finish);
+  el.addEventListener('pointercancel',finish);   /* 触屏被打断也能安全落位 */
+}
+
+/* ================= 状态流转 ================= */
+function resetCoverVisual(st2o){
+  stopAnims(st2o.el);
+  st2o.el.classList.remove('tilt','wobble','covered','dragging');
+  st2o.el.style.transform='';          /* 清掉内联 transform，恢复 --rot 旋转 */
+}
+function goHome(st2o){
+  st2o.st='home';st2o.rot=0;
+  resetCoverVisual(st2o);
+  st2o.el.style.setProperty('--rot','0deg');
+  placeHome(st2o);
+  renderTools();
+  if(!coveredSt()){
+    setGaugeCover(null);setGaugeMarker(COVERS2[0]);setHole('circle');
+    st2Hint.innerHTML='拖一个井盖到井口上方，松手把它盖好。';
+  }
+}
+function coverIt(st2o){
+  st2o.st='covered';
+  st2o.el.classList.add('covered');
+  syncCovered(st2o);
+  SFX.clack();
+  setHole(st2o.cfg.id);
+  setGaugeMarker(st2o.cfg);
+  setGaugeCover(st2o.cfg.flat);
+  renderTools();
+  st2Hint.innerHTML=`<b>${st2o.cfg.name}井盖</b>已盖好（平放时最宽 <b>${st2o.cfg.flat}cm</b>）。点「翘起来试试」！`;
+}
+function resetAll(){
+  SFX.click();
+  COVERS2.forEach(c=>{
+    const s=c._st;s.st='home';s.rot=0;
+    resetCoverVisual(s);
+    s.el.style.setProperty('--rot','0deg');
+    s.el.style.opacity=1;
+    placeHome(s);
+  });
+  setHole('circle');setGaugeMarker(COVERS2[0]);setGaugeCover(null);
+  renderTools();
+  st2Hint.innerHTML='实验场已重置。拖一个井盖到井口上方，松手把它盖好。';
+}
+
+/* ================= 按钮 ================= */
+function addBtn(txt,fn,cls){
+  const b=document.createElement('button');
+  b.className='btn '+(cls||'');b.textContent=txt;
+  b.addEventListener('click',()=>{SFX.click();fn();});
+  toolBtns.appendChild(b);
+}
+function renderTools(){
+  toolBtns.innerHTML='';
+  if(st2.testing)return;
+  const fallen=COVERS2.map(c=>c._st).find(s=>s.st==='fallen');
+  if(fallen){
+    st2Hint.innerHTML=`<b style="color:var(--red)">井口敞开，危险！</b>快把${fallen.cfg.name}井盖打捞上来。`;
+    addBtn('打捞井盖',()=>salvage(fallen));
+  }else{
+    const st2o=coveredSt();
+    if(st2o){
+      if(st2o.cfg.id==='circle'){
+        addBtn('随便转个角度',()=>spinCircle(st2o));
+        addBtn('翘起来试试',()=>runTest(st2o),'ghost');
+      }else{
+        addBtn('翘起来试试',()=>runTest(st2o));
+      }
+      addBtn('放回架子',()=>{goHome(st2o);st2Hint.innerHTML='井盖已放回材料架。';},'ghost');
+    }else if(!COVERS2.map(c=>c._st).some(s=>s.st==='drag')){
+      st2Hint.innerHTML='拖一个井盖到井口上方，松手把它盖好。';
+    }
+  }
+  /* 关键修复②：只要有井盖不在架上，永远保留"全部放回"兜底按钮 */
+  if(COVERS2.map(c=>c._st).some(s=>s.st!=='home'))addBtn('全部放回架子',resetAll,'ghost');
+}
+function spinCircle(st2o){
+  st2o.rot+=60+Math.round(Math.random()*240);
+  st2o.el.style.setProperty('--rot',st2o.rot+'deg');
+  spinCountN++;
+  setGaugeCover(st2o.cfg.flat);
+  st2Hint.innerHTML=`已转过 <b>${spinCountN}</b> 个角度——挡在井口上的永远是直径 <b>62cm</b>，一丝都没变！`;
+}
+
+/* ================= 翘起测试 ================= */
+async function runTest(st2o){
+  const cfg=st2o.cfg;
+  st2.testing=true;renderTools();
+  st2Hint.textContent='测试中，盯住下面的宽度计……';
+  const el=st2o.el,rot=st2o.rot;
+  const pc=pitCenter(),sr=stagePos();
+
+  /* 第一步：竖起来 → 宽度从"最宽"缩到"最窄" */
+  el.style.setProperty('--tilt',cfg.tiltDeg+'deg');
+  el.classList.add('tilt');
+  SFX.slide();
+  tween(cfg.flat,cfg.min,550,v=>setGaugeCover(v,v<cfg.holeMax));
+
+  await wait(700);
+
+  if(cfg.fit){
+    /* —— 圆：缩不下去，弹回 —— */
+    el.classList.remove('tilt');
+    el.classList.add('wobble');SFX.clack();
+    await wait(420);SFX.clack();
+    await wait(420);
+    el.classList.remove('wobble');
+    spawnParticles(stage,pc.x-sr.left,pc.y-sr.top-cfg.h/2-6,'star',8);
+    SFX.ding();
+    st2.testing=false;renderTools();
+    const extra=spinCountN?`刚才已经转过 <b>${spinCountN}</b> 个角度，结果都一样。`:'';
+    showMsg(false,'掉不下去！',
+      `圆盖不管转到哪个角度、竖起来多少，挡在井口上的都是直径 <b>62cm</b>——圆的最宽和最窄<b>一模一样</b>，处处 62 ＞ 60，没有"窄方向"可以钻。${extra}`,
+      '直径 62 cm　＞　井口 60 cm　（转多少次都一样）');
+  }else{
+    /* —— 方 / 三角：沿井口最宽的方向滑进去 —— */
+    st2Hint.innerHTML=`<b>${cfg.name}竖起来后只剩 ${cfg.min}cm</b>，小于井口最宽的 ${cfg.holeMax}cm……要滑进去了！`;
+    await wait(500);
+    const startDeg=rot+cfg.tiltDeg,endDeg=startDeg+130;
+    /* 关键修复③：tilt 类是 !important，会压住 JS 动画——
+       先用内联样式锁定起始角度，再摘掉 tilt 类，然后播放下落动画 */
+    el.style.transform=`rotate(${startDeg}deg)`;
+    el.classList.remove('tilt');
+    SFX.whoosh();
+    const anim=el.animate([
+      {transform:`rotate(${startDeg}deg) translateY(0) scale(1)`,opacity:1},
+      {transform:`rotate(${startDeg+70}deg) translateY(95px) scale(.72)`,opacity:.95,offset:.55},
+      {transform:`rotate(${endDeg}deg) translateY(210px) scale(.42)`,opacity:0}
+    ],{duration:700,easing:'cubic-bezier(.5,0,.85,.4)',fill:'forwards'});
+    try{await anim.finished;}catch(_){}
+    SFX.thud();
+    stage.classList.add('shake');
+    spawnParticles(stage,pc.x-sr.left,pc.y-sr.top+60,'dust',10);
+    await wait(380);
+    stage.classList.remove('shake');
+    st2o.st='fallen';
+    st2.testing=false;renderTools();
+    if(cfg.id==='square'){
+      showMsg(true,'扑通——掉进去了！',
+        '方形井口沿边量只有60cm，可<b>斜对角量有84.8cm</b>。方盖竖起来、斜角朝下一送——它只剩62cm宽，比84.8小，就顺着对角线滑进去了！',
+        '井口对角线 = 60 × 1.414 ≈ 84.8 cm　＞　井盖 62 cm');
+    }else{
+      showMsg(true,'扑通——掉进去了！',
+        '三角形竖起来、顶点朝下，挡在井口上的只剩一条<b>高</b>：62 × 0.866 ≈ 53.7cm——比井口60cm还窄，直接滑进去了！',
+        '三角形的高 = 62 × 0.866 ≈ 53.7 cm　＜　井口 60 cm');
+    }
+  }
+}
+async function salvage(st2o){
+  SFX.good();
+  st2o.st='home';st2o.rot=0;
+  resetCoverVisual(st2o);                 /* 取消 fill:forwards 动画 + 清内联样式 */
+  st2o.el.style.setProperty('--rot','0deg');
+  st2o.el.style.opacity=0;
+  placeHome(st2o);
+  setHole('circle');setGaugeMarker(COVERS2[0]);setGaugeCover(null);
+  requestAnimationFrame(()=>{st2o.el.style.opacity=1;});
+  renderTools();
+  st2Hint.innerHTML='井盖已打捞回材料架。换一个形状继续实验！';
+}
+function showMsg(err,title,body,formula){
+  const card=$('#msgCard');
+  card.classList.toggle('err',err);card.classList.toggle('ok',!err);
+  $('#mcHead').innerHTML=(err?ICON.cross:ICON.ok)+title;
+  $('#mcBody').innerHTML=body;
+  $('#mcFormula').textContent=formula;
+  card.classList.add('show');
+}
+$('#mcClose').addEventListener('click',()=>$('#msgCard').classList.remove('show'));
+</script>
+</body>
+</html>
