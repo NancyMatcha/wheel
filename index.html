@@ -11,7 +11,8 @@
   --bg:#17181d; --panel:#20232a; --panel2:#262a32; --line:#31353f;
   --ink:#edeae1; --ink2:#a7a49a;
   --yellow:#f6b81c; --yellow2:#ffd479;
-  --orange:#ff8a3d; --red:#ff5c5c; --green:#54d97c;
+  --orange:#ff8a3d;
+  --red:#ff5c5c; --green:#54d97c;
   --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
 }
 body{background:var(--bg);color:var(--ink);font-family:'Noto Sans SC',sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -19,7 +20,6 @@ h1,h2,.kt{font-family:'ZCOOL QingKe HuangYou','Noto Sans SC',sans-serif;font-wei
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
 button{font-family:inherit;cursor:pointer}
 ::selection{background:var(--yellow);color:#111}
-
 .topbar{position:sticky;top:0;z-index:60;background:rgba(20,21,26,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .topbar .wrap{display:flex;align-items:center;gap:12px;height:56px}
 .logo{display:flex;align-items:center;gap:10px;font-family:'ZCOOL QingKe HuangYou';font-size:18px;color:var(--yellow2)}
@@ -27,13 +27,11 @@ button{font-family:inherit;cursor:pointer}
 .sndbtn{margin-left:auto;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink2);display:grid;place-items:center}
 .sndbtn:hover{color:var(--ink)}
 .sndbtn svg{width:18px;height:18px}
-
 .hero{padding:34px 0 4px;text-align:center}
 .kicker{display:inline-block;font-size:13px;color:#141414;background:var(--yellow);padding:4px 14px;border-radius:999px;font-weight:700;margin-bottom:12px}
 .hero h1{font-size:clamp(28px,4.6vw,44px)}
 .hero h1 em{font-style:normal;color:var(--yellow)}
 .hero p{color:var(--ink2);margin:10px auto 0;max-width:620px;font-size:14.5px}
-
 section{padding:26px 0 10px}
 .btn{background:var(--yellow);color:#141414;border:none;border-radius:12px;padding:10px 18px;font-size:14.5px;font-weight:700;transition:.15s;box-shadow:0 3px 0 #a67c0a}
 .btn:hover{filter:brightness(1.06)}
@@ -48,7 +46,6 @@ section{padding:26px 0 10px}
 .stage.shake{animation:shake .42s}
 @keyframes shake{0%,100%{transform:translate(0,0)}15%{transform:translate(-7px,4px)}30%{transform:translate(6px,-5px)}45%{transform:translate(-5px,3px)}60%{transform:translate(4px,-3px)}75%{transform:translate(-3px,2px)}}
 .s2-title{position:absolute;left:20px;top:14px;font-size:13px;color:#8b887e;letter-spacing:.12em}
-
 .pit{position:absolute;left:38%;top:52%;width:260px;height:260px;transform:translate(-50%,-50%)}
 .pit-hazard{position:absolute;inset:0;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5))}
 .holesvg{position:absolute;inset:0}
@@ -58,13 +55,11 @@ section{padding:26px 0 10px}
 .pit-dashed{position:absolute;inset:0;opacity:0;transition:opacity .2s;pointer-events:none}
 .pit-dashed.show{opacity:1}
 .pit-dashed svg{width:100%;height:100%;overflow:visible}
-
 .rack{position:absolute;right:14px;top:16px;bottom:16px;width:186px;background:rgba(18,20,25,.66);border:1px solid var(--line);border-radius:16px;padding:12px 10px;display:flex;flex-direction:column;gap:8px;backdrop-filter:blur(3px)}
 .rack-t{font-size:12px;color:var(--ink2);text-align:center;letter-spacing:.14em;margin-bottom:2px}
 .slot{flex:1;border:1.5px dashed #3b3f4a;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:6px;min-height:0}
-.slot .slot-name{font-size:11.5px;color:var(--ink2)}
+.slot .slot-name{font-size:11.5px;color:var(--ink2);position:relative;z-index:6;text-align:center;padding:0 4px}
 .slot.occupied{border-color:transparent}
-
 .cover-drag{position:absolute;z-index:5;touch-action:none;cursor:grab;filter:drop-shadow(0 12px 16px rgba(0,0,0,.55));transform:rotate(var(--rot,0deg));transition:transform .45s,left .35s cubic-bezier(.3,1.2,.4,1),top .35s cubic-bezier(.3,1.2,.4,1),opacity .4s}
 .cover-drag svg{display:block;width:100%;height:auto;pointer-events:none}
 .cover-drag.dragging{cursor:grabbing;z-index:20;transition:none;filter:drop-shadow(0 20px 26px rgba(0,0,0,.65))}
@@ -72,7 +67,6 @@ section{padding:26px 0 10px}
 .cover-drag.tilt{transform:rotate(calc(var(--rot,0deg) + var(--tilt,-18deg)))!important}
 .cover-drag.wobble{animation:wob .85s both}
 @keyframes wob{0%{transform:rotate(calc(var(--rot,0deg) - 18deg))}30%{transform:rotate(calc(var(--rot,0deg) + 6deg))}60%{transform:rotate(calc(var(--rot,0deg) - 5deg))}100%{transform:rotate(var(--rot,0deg))}}
-
 .tools{margin-top:18px;display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:20px;align-items:center}
 @media(max-width:860px){.tools{grid-template-columns:1fr}}
 .gauge{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
@@ -97,7 +91,6 @@ section{padding:26px 0 10px}
 .tool-btns{display:flex;flex-wrap:wrap;gap:10px;min-height:44px}
 .key-fact{margin-top:16px;text-align:center;font-size:14.5px;color:var(--ink2);background:var(--panel);border:1px dashed #4a4f5b;border-radius:14px;padding:12px 16px}
 .key-fact b{color:var(--yellow)}
-
 .msg-card{position:absolute;right:16px;top:16px;width:min(330px,80%);z-index:30;background:#22252c;border:1px solid var(--line);border-left:4px solid var(--green);border-radius:14px;padding:16px 18px;box-shadow:0 18px 40px rgba(0,0,0,.5);transform:translateX(30px);opacity:0;pointer-events:none;transition:.35s cubic-bezier(.2,.9,.3,1.2)}
 .msg-card.show{transform:none;opacity:1;pointer-events:auto}
 .msg-card.err{border-left-color:var(--red)}
@@ -115,7 +108,6 @@ section{padding:26px 0 10px}
   .rack{left:12px;right:12px;top:auto;bottom:12px;width:auto;height:150px;flex-direction:row;padding:10px}
   .msg-card{top:10px;right:10px;left:10px;width:auto}
 }
-
 .pt{position:absolute;pointer-events:none;z-index:25;animation:ptFly .75s cubic-bezier(.2,.7,.4,1) forwards}
 .pt.dust{width:9px;height:9px;border-radius:50%;background:#8a8f99;opacity:.85}
 .pt.star{width:13px;height:13px;background:var(--yellow2);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
@@ -167,6 +159,7 @@ footer b{color:var(--yellow2)}
   <div class="wrap">
     <div class="stage" id="stage">
       <div class="s2-title">井盖下落测试场</div>
+
       <div class="pit" id="pit">
         <svg class="pit-hazard" viewBox="0 0 260 260">
           <circle cx="130" cy="130" r="122" fill="none" stroke="url(#pHazard)" stroke-width="14"/>
@@ -181,12 +174,14 @@ footer b{color:var(--yellow2)}
         <div class="pit-dashed" id="pitDashed"></div>
         <div class="pit-tag">测试井口 · <b>60 cm</b>（形状随井盖变化）</div>
       </div>
+
       <div class="rack" id="rack">
         <div class="rack-t">井盖材料架</div>
         <div class="slot" data-slot="0"><span class="slot-name"></span></div>
         <div class="slot" data-slot="1"><span class="slot-name"></span></div>
         <div class="slot" data-slot="2"><span class="slot-name"></span></div>
       </div>
+
       <div class="msg-card" id="msgCard">
         <div class="mc-head" id="mcHead"></div>
         <p id="mcBody"></p>
@@ -295,12 +290,12 @@ function coverSVG(shape){
 
 /* ================= 数据：统一尺寸 =================
    井口一律 60cm；井盖最宽一律 62cm（盖子要比口大才搭得住）
-   flat=平放最宽  min=竖起来后最窄  holeMax=井口最宽方向          */
+   flat=平放最宽  min=竖起来后最窄  holeMax=井口最宽方向 */
 const CM=2.2;
 const COVERS2=[
-  {id:'circle',name:'圆形',  label:'直径 62 cm', w:62*CM, h:62*CM,     flat:62,   min:62,   holeMax:60,   holeTxt:'井口 60 cm',     tiltDeg:-18, fit:true },
-  {id:'square',name:'正方形',label:'边长 62 cm', w:62*CM, h:62*CM,     flat:87.7, min:62,   holeMax:84.8, holeTxt:'井口对角线 84.8', tiltDeg:-55, fit:false},
-  {id:'tri',   name:'三角形',label:'边长 62 cm', w:62*CM, h:62*CM*.89, flat:62,   min:53.7, holeMax:60,   holeTxt:'井口 60 cm',     tiltDeg:-62, fit:false}
+  {id:'circle',name:'圆形', label:'直径 62 cm', w:62*CM, h:62*CM,     flat:62,   min:62,   holeMax:60,   holeTxt:'井口 60 cm',        tiltDeg:-18, fit:true },
+  {id:'square',name:'正方形',label:'边长 62 cm', w:62*CM, h:62*CM,     flat:87.7, min:62,   holeMax:84.8, holeTxt:'井口对角线 84.8',   tiltDeg:-55, fit:false},
+  {id:'tri',  name:'三角形',label:'边长 62 cm', w:62*CM, h:62*CM*.89, flat:62,   min:53.7, holeMax:60,   holeTxt:'井口 60 cm',        tiltDeg:-62, fit:false}
 ];
 const GUIDES={
   circle:'<circle cx="130" cy="130" r="68.2" fill="none" stroke="#f6b81c" stroke-width="2.5" stroke-dasharray="8 7"/>',
@@ -348,17 +343,25 @@ COVERS2.forEach((cfg,idx)=>{
 document.querySelectorAll('#rack .slot').forEach((s,i)=>{
   s.querySelector('.slot-name').textContent=COVERS2[i].name+' · '+COVERS2[i].label;
 });
+
 function stagePos(){return stage.getBoundingClientRect();}
 function pitCenter(){const r=pit.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};}
 function elCenter(el){const r=el.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};}
 function nearPit(el){const c=elCenter(el),p=pitCenter();return Math.hypot(c.x-p.x,c.y-p.y)<115;}
 function coveredSt(){return COVERS2.map(c=>c._st).find(s=>s.st==='covered');}
+
+/* 放回架子：底部给「名称 · 尺寸」文字预留 32px，井盖只在上方区域居中；超高则按比例缩小，绝不压住文字 */
 function placeHome(st2o){
   const slot=rack.querySelector(`.slot[data-slot="${st2o.idx}"]`);
   const r=slot.getBoundingClientRect(),sr=stagePos();
+  const LBL=32;
   st2o.el.style.width=Math.min(st2o.cfg.w,r.width-16)+'px';
+  if(st2o.el.offsetHeight>r.height-LBL){
+    st2o.el.style.width=(st2o.el.offsetWidth*(r.height-LBL)/st2o.el.offsetHeight)+'px';
+  }
+  const zoneH=r.height-LBL;
   st2o.el.style.left=(r.left-sr.left+r.width/2-st2o.el.offsetWidth/2)+'px';
-  st2o.el.style.top =(r.top -sr.top +r.height/2-st2o.el.offsetHeight/2-6)+'px';
+  st2o.el.style.top =(r.top -sr.top +Math.max(2,(zoneH-st2o.el.offsetHeight)/2))+'px';
   st2o.el.style.opacity=1;
   slot.classList.add('occupied');
 }
@@ -391,7 +394,6 @@ function onDragStart(e,st2o){
   renderTools();
   if(wasCovered)st2Hint.innerHTML='拿着<b>'+st2o.cfg.name+'井盖</b>——放回井口盖上，或拖回架子松手放下。';
   SFX.pick();
-
   const move=ev=>{
     el.style.left=(ev.clientX-sr.left-ox)+'px';
     el.style.top =(ev.clientY-sr.top -oy)+'px';
@@ -417,14 +419,14 @@ function onDragStart(e,st2o){
   };
   el.addEventListener('pointermove',move);
   el.addEventListener('pointerup',finish);
-  el.addEventListener('pointercancel',finish);   /* 触屏被打断也能安全落位 */
+  el.addEventListener('pointercancel',finish); /* 触屏被打断也能安全落位 */
 }
 
 /* ================= 状态流转 ================= */
 function resetCoverVisual(st2o){
   stopAnims(st2o.el);
   st2o.el.classList.remove('tilt','wobble','covered','dragging');
-  st2o.el.style.transform='';          /* 清掉内联 transform，恢复 --rot 旋转 */
+  st2o.el.style.transform=''; /* 清掉内联 transform，恢复 --rot 旋转 */
 }
 function goHome(st2o){
   st2o.st='home';st2o.rot=0;
@@ -514,7 +516,6 @@ async function runTest(st2o){
   el.classList.add('tilt');
   SFX.slide();
   tween(cfg.flat,cfg.min,550,v=>setGaugeCover(v,v<cfg.holeMax));
-
   await wait(700);
 
   if(cfg.fit){
@@ -530,7 +531,7 @@ async function runTest(st2o){
     const extra=spinCountN?`刚才已经转过 <b>${spinCountN}</b> 个角度，结果都一样。`:'';
     showMsg(false,'掉不下去！',
       `圆盖不管转到哪个角度、竖起来多少，挡在井口上的都是直径 <b>62cm</b>——圆的最宽和最窄<b>一模一样</b>，处处 62 ＞ 60，没有"窄方向"可以钻。${extra}`,
-      '直径 62 cm　＞　井口 60 cm　（转多少次都一样）');
+      '直径 62 cm ＞ 井口 60 cm （转多少次都一样）');
   }else{
     /* —— 方 / 三角：沿井口最宽的方向滑进去 —— */
     st2Hint.innerHTML=`<b>${cfg.name}竖起来后只剩 ${cfg.min}cm</b>，小于井口最宽的 ${cfg.holeMax}cm……要滑进去了！`;
@@ -557,18 +558,19 @@ async function runTest(st2o){
     if(cfg.id==='square'){
       showMsg(true,'扑通——掉进去了！',
         '方形井口沿边量只有60cm，可<b>斜对角量有84.8cm</b>。方盖竖起来、斜角朝下一送——它只剩62cm宽，比84.8小，就顺着对角线滑进去了！',
-        '井口对角线 = 60 × 1.414 ≈ 84.8 cm　＞　井盖 62 cm');
+        '井口对角线 = 60 × 1.414 ≈ 84.8 cm ＞ 井盖 62 cm');
     }else{
       showMsg(true,'扑通——掉进去了！',
         '三角形竖起来、顶点朝下，挡在井口上的只剩一条<b>高</b>：62 × 0.866 ≈ 53.7cm——比井口60cm还窄，直接滑进去了！',
-        '三角形的高 = 62 × 0.866 ≈ 53.7 cm　＜　井口 60 cm');
+        '三角形的高 = 62 × 0.866 ≈ 53.7 cm ＜ 井口 60 cm');
     }
   }
 }
 async function salvage(st2o){
   SFX.good();
   st2o.st='home';st2o.rot=0;
-  resetCoverVisual(st2o);                 /* 取消 fill:forwards 动画 + 清内联样式 */
+  resetCoverVisual(st2o);
+  /* 取消 fill:forwards 动画 + 清内联样式 */
   st2o.el.style.setProperty('--rot','0deg');
   st2o.el.style.opacity=0;
   placeHome(st2o);
